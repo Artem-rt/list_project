@@ -52,11 +52,11 @@ void push_list (struct List* list, TYPE_OF_LIST_ELEM argument, int position)
                     list -> next [i] = 2;
                     list -> data [i] = argument;
                     list -> next [list -> tail] = i;
-                    list -> cnt_elem ++;
                     list -> tail = i;
                     break;
                 }
             }
+            list -> cnt_elem ++;
         }
     }
 
@@ -71,6 +71,7 @@ void push_list (struct List* list, TYPE_OF_LIST_ELEM argument, int position)
                 list -> head = i;
                 list -> data [i] = argument;
                 list -> cnt_elem ++ ;
+                break;
             }
         }
     }
@@ -93,6 +94,26 @@ void push_list (struct List* list, TYPE_OF_LIST_ELEM argument, int position)
         }
     }
 
+}
+
+TYPE_OF_LIST_ELEM pop_list (struct List* list, int position)
+{
+    assert (list);
+    assert (position >= 1 && position <= list -> cnt_elem && list -> cnt_elem <= list -> len_data - 2);
+
+    int index_now_elem = list -> tail;
+    int index_prev_elem = list -> tail;
+    for (int i = 0; i < position ; i ++) //TODO O(1) - prev - array
+    {
+        if (i <= position - 2) index_prev_elem = list -> next [index_now_elem];
+        index_now_elem = list -> next [index_now_elem];
+    }
+
+    list -> next [index_prev_elem] = list -> next [index_now_elem];
+    list -> next [index_now_elem] = -1;
+    list -> cnt_elem ++ ;
+    if (index_now_elem == list -> head) list -> head = index_prev_elem;
+    return list -> data [index_now_elem];
 }
 
 #endif

@@ -15,5 +15,7 @@ int main()
 
     init_list (&list_one);
     push_list (&list_one, argument, position);
+    push_list (&list_one, argument + 20, position + 1);
+    printf ("pop == %d", pop_list (&list_one, position));
     // printf ("data[0] == %d data [1] == %d  data [2] == %d\n", list_one.data [0], list_one.data [1], list_one.data [2]);
 }
