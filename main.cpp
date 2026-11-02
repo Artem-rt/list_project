@@ -1,4 +1,5 @@
 // list.cpp - project with my own list
+// TODO: error_file - *.log and dump
 // useful libraries---------------------------------------------------------
 #include <stdio.h>
 #include "list.h"
@@ -14,7 +15,10 @@ int main()
     // ---------------------------------------------------------------------
 
     init_list (&list_one);
-    push_list (&list_one, argument, position);
+    push_list (&list_one, 1, position);
+    push_list (&list_one, 2, position + 1);
+    push_list (&list_one, 3, position + 2);
+
 
 //
     // for (int i = 0; i < list_one.len_data; i ++)
@@ -28,7 +32,7 @@ int main()
     // printf ("\n\n\n");
 //
 
-    push_list (&list_one, argument + 20, position + 1);
+    push_list (&list_one, 4, position + 3);
 
 //
     // for (int i = 0; i < list_one.len_data; i ++)
@@ -42,7 +46,7 @@ int main()
     // printf ("\n\n\n");
 //
 
-    printf ("pop == %d\n", pop_list (&list_one, position));
+    printf ("pop == %d\n", pop_list (&list_one, position + 1));
 
 //
     // for (int i = 0; i < list_one.len_data; i ++)

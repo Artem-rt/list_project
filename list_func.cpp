@@ -107,15 +107,11 @@ TYPE_OF_LIST_ELEM pop_list (struct List* list, int position)
 
     TYPE_OF_LIST_ELEM temp_arg = POISON;
 
-    int index_now_elem = list -> tail;
-    int index_prev_elem = list -> tail;
-    for (int i = 0; i < position ; i ++) //TODO O(1) - prev - array
-    {
-        if (i <= position - 2) index_prev_elem = list -> next [index_now_elem];
-        index_now_elem = list -> next [index_now_elem];
-    }
+    int index_now_elem = list -> prev [position + 1];
+    int index_prev_elem = list -> prev [position];
 
     list -> next [index_prev_elem] = list -> next [index_now_elem];
+    list -> prev [list -> next[index_now_elem]] = list -> prev [index_now_elem];
     list -> next [index_now_elem] = -1;
     list -> prev [index_now_elem] = -1;
     list -> cnt_elem ++ ;
