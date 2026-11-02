@@ -19,6 +19,7 @@ struct List
 {
     TYPE_OF_LIST_ELEM* data;
     int* next;
+    int* prev;
     int len_data;
     int head;
     int tail;
