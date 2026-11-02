@@ -121,4 +121,36 @@ TYPE_OF_LIST_ELEM pop_list (struct List* list, int position)
     return temp_arg;
 }
 
+void dump_list (struct List* list, FILE* dump_file) //TODO: graphwith
+{
+    assert (list);
+    assert (dump_file);
+
+    fprintf (dump_file, "struct LIST created at %s on %s\n", __TIME__, __DATE__);
+    fprintf (dump_file, "{\n");
+    fprintf (dump_file, "\tdata [%d]\n\t{\n\t", list -> len_data);
+    for (int i = 0; i < list -> len_data; i ++)
+    {
+        fprintf (dump_file, "[%7d]", i);
+    }
+    fprintf (dump_file, "\n\t");
+    for (int i = 0; i < list -> len_data; i ++)
+    {
+        fprintf (dump_file, "\t" SPECIF_TYPE, list -> data [i]);
+    }
+    fprintf (dump_file, "\n\t}\n\tnext\n\t{");
+    fprintf (dump_file, "\n\t");
+    for (int i = 0; i < list -> len_data; i ++)
+    {
+        fprintf (dump_file, "\t" SPECIF_TYPE, list -> next [i]);
+    }
+    fprintf (dump_file, "\n\t}\n\tprev\n\t{");
+    fprintf (dump_file, "\n\t");
+    for (int i = 0; i < list -> len_data; i ++)
+    {
+        fprintf (dump_file, "\t" SPECIF_TYPE, list -> prev[i]);
+    }
+    fprintf (dump_file, "\n\t}\n");
+}
+
 #endif
