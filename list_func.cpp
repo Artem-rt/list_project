@@ -164,9 +164,34 @@ void dump_list (struct List* list) //TODO: graphviz
     fprintf (dump_file, "node%d -> node%d;\n", i + 1, 0);
     if (i - 1 >= 0) fprintf (dump_file, "node%d -> node%d;\n", i + 2, i - 1);
 
-    fprintf (dump_file, "}\n}\n");
+    fprintf (dump_file, "}\n");
 
-    fflush (dump_file);
+    fprintf (dump_file, "subgraph cluster_data {\n");
+    fprintf (dump_file, "label = \"data. Created: time:%s, date: %s\";\n", __TIME__, __DATE__);
+    fprintf (dump_file, "style = rounded;\n");
+    fprintf (dump_file, "color = \"#ff0015\";\n");
+
+    fprintf (dump_file, "ceil01 [shape = record, label =\"No|data\"];\n");
+    int j = 0;
+    for (j = 0; j < list -> len_data; j ++)
+    {
+        fprintf (dump_file, "ceil%d [shape = record, label =\"%d|" SPECIF_TYPE "\"];\n", j, j, list -> data [j]);
+
+        if (j == 0) fprintf (dump_file, "ceil01 -> node0 [style = invis, weight = 100];\n");
+        else fprintf (dump_file, "ceil%d -> ceil%d [style = invis, weight = 200];\n", j - 1, j);
+    }
+
+    now_elem_index = list -> tail;
+    for (int k = 0; k < list -> len_data; k ++)
+    {
+        fprintf (dump_file, "ceil%d -> ceil%d [color = \"#00fb5c\"];\n", now_elem_index, list -> next [now_elem_index]);
+        if (now_elem_index == 0) break;
+        now_elem_index = list -> next [now_elem_index];
+    }
+
+    fprintf (dump_file, "}\n}");
+
+    fflush (dump_file); //clear buffer
 
     system (name_command);
 
