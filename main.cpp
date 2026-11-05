@@ -2,6 +2,7 @@
 // TODO: error_file - *.log and dump
 // useful libraries---------------------------------------------------------
 #include <stdio.h>
+#include <fcntl.h>
 #include "list.h"
 #include "list_func.cpp"
 // -------------------------------------------------------------------------
@@ -12,23 +13,18 @@ int main()
     struct List list_one = { } ;
     TYPE_OF_LIST_ELEM argument = 100;
     int position = 1;
-    FILE* dump_file = NULL;
+
     // ---------------------------------------------------------------------
 
-    if ((dump_file = fopen (DUMP_FILE, "w")) == NULL)
-    {
-        printf ("dump_file didn't open -> stdout\n");
-        dump_file = stdout;
-    }
+
 
     init_list (&list_one);
-    dump_list (&list_one, dump_file);
     push_list (&list_one, 1, position);
-    dump_list (&list_one, dump_file);
+    dump_list (&list_one);
     push_list (&list_one, 2, position + 1);
-    dump_list (&list_one, dump_file);
+    dump_list (&list_one);
     push_list (&list_one, 3, position + 2);
-    dump_list (&list_one, dump_file);
+    dump_list (&list_one);
 
 
 //
@@ -44,7 +40,7 @@ int main()
 //
 
     push_list (&list_one, 4, position + 3);
-    dump_list (&list_one, dump_file);
+    dump_list (&list_one);
 //
     // for (int i = 0; i < list_one.len_data; i ++)
     //     printf ("%5d", list_one.data[i]);
@@ -58,7 +54,7 @@ int main()
 //
 
     printf ("pop == %d\n", pop_list (&list_one, position + 1));
-    dump_list (&list_one, dump_file);
+    dump_list (&list_one);
 //
     // for (int i = 0; i < list_one.len_data; i ++)
     //     printf ("%5d", list_one.data[i]);

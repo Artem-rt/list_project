@@ -121,36 +121,56 @@ TYPE_OF_LIST_ELEM pop_list (struct List* list, int position)
     return temp_arg;
 }
 
-void dump_list (struct List* list, FILE* dump_file) //TODO: graphwith
+void dump_list (struct List* list) //TODO: graphviz
 {
     assert (list);
-    assert (dump_file);
 
-    fprintf (dump_file, "struct LIST created at %s on %s\n", __TIME__, __DATE__);
-    fprintf (dump_file, "{\n");
-    fprintf (dump_file, "\tdata [%d]\n\t{\n\t", list -> len_data);
-    for (int i = 0; i < list -> len_data; i ++)
+    int now_elem_index = list -> tail;
+    char name_command [512];
+    static int cnt_call = 0;
+    FILE* dump_file = NULL;
+
+    if ((dump_file = fopen (DUMP_FILE, "w")) == NULL)
     {
-        fprintf (dump_file, "[%7d]", i);
+        printf ("sorrY, can not open dump_file :(\n");
+        assert (false);
     }
-    fprintf (dump_file, "\n\t");
-    for (int i = 0; i < list -> len_data; i ++)
+
+    cnt_call ++;
+    sprintf (name_command, "dot " DUMP_FILE " -Tpng -o dumps/dump_%d.png", cnt_call);
+
+    fprintf (dump_file, "digraph DUMP_LIST {\n");
+    fprintf (dump_file, "rankdir = LR;\nnewrank = true;\nnode [shape = Mrecord];\n");
+    fprintf (dump_file, "\nsubgraph cluster_sequential_output {\n");
+    fprintf (dump_file, "label = \"Sequential output. Created: time:%s, date: %s\";\n", __TIME__, __DATE__);
+    fprintf (dump_file, "style = rounded;\n");
+    fprintf (dump_file, "color = \"#0c0a79\";\n");
+
+    int i = 0;
+    for (i = 0; i < list -> len_data; i ++)
     {
-        fprintf (dump_file, "\t" SPECIF_TYPE, list -> data [i]);
+        fprintf (dump_file, "node%d [shape = Mrecord, label=\"{No|%d}|{data|" SPECIF_TYPE "}|{next|%d}|{prev|%d}\"];\n",
+                i,now_elem_index, list -> data [now_elem_index], list -> next [now_elem_index], list -> prev [now_elem_index]);
+        if (i != 0) fprintf (dump_file, "node%d -> node%d [label = \"%d\", weight = 100];\n", i - 1, i, i - 1);
+        if (now_elem_index == 0) break;
+        now_elem_index = list -> next [now_elem_index];
     }
-    fprintf (dump_file, "\n\t}\n\tnext\n\t{");
-    fprintf (dump_file, "\n\t");
-    for (int i = 0; i < list -> len_data; i ++)
-    {
-        fprintf (dump_file, "\t" SPECIF_TYPE, list -> next [i]);
-    }
-    fprintf (dump_file, "\n\t}\n\tprev\n\t{");
-    fprintf (dump_file, "\n\t");
-    for (int i = 0; i < list -> len_data; i ++)
-    {
-        fprintf (dump_file, "\t" SPECIF_TYPE, list -> prev[i]);
-    }
-    fprintf (dump_file, "\n\t}\n");
+    fprintf (dump_file, "node%d [shape = Mrecord, label = \"tail|%d\"];\n", i + 1, list -> tail);
+    fprintf (dump_file, "node%d [shape = Mrecord, label = \"head|%d\"];\n", i + 2, list -> head);
+
+    fprintf (dump_file, "node%d -> node%d [style = invis];\n", 0, i + 1);
+    if (i - 1 >= 0) fprintf (dump_file, "node%d -> node%d [style = invis];\n", i - 1, i + 2);
+
+    fprintf (dump_file, "node%d -> node%d;\n", i + 1, 0);
+    if (i - 1 >= 0) fprintf (dump_file, "node%d -> node%d;\n", i + 2, i - 1);
+
+    fprintf (dump_file, "}\n}\n");
+
+    fflush (dump_file);
+
+    system (name_command);
+
+    fclose (dump_file);
 }
 
 #endif

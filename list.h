@@ -36,7 +36,7 @@ struct List
 void init_list (struct List* list);
 void push_list (struct List* list, TYPE_OF_LIST_ELEM argument, int position);
 TYPE_OF_LIST_ELEM pop_list (struct List* list, int position);
-void dump_list (struct List* list, FILE* dump_file);
+void dump_list (struct List* list);
 // -------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------
