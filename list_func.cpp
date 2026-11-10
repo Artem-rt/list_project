@@ -11,7 +11,7 @@ void init_list (struct List* list)
 {
     assert (list);
 
-    list -> data = (TYPE_OF_LIST_ELEM*) calloc (MIN_DATA_LEN, sizeof (TYPE_OF_LIST_ELEM));
+    list -> data = (TYPE_OF_LIST_ELEM*) calloc (MIN_DATA_LEN, sizeof (TYPE_OF_LIST_ELEM)); //TODO NULL CHECK
     list -> next = (int*) calloc (MIN_DATA_LEN, sizeof (int));
     list -> next = (int*) calloc (MIN_DATA_LEN, sizeof (int));
     list -> prev = (int*) calloc (MIN_DATA_LEN, sizeof (int));
@@ -121,7 +121,7 @@ TYPE_OF_LIST_ELEM pop_list (struct List* list, int position)
     return temp_arg;
 }
 
-void dump_list (struct List* list) //TODO: graphviz
+void dump_list (struct List* list)
 {
     assert (list);
 
@@ -149,14 +149,20 @@ void dump_list (struct List* list) //TODO: graphviz
     int i = 0;
     for (i = 0; i < list -> len_data; i ++)
     {
-        fprintf (dump_file, "node%d [shape = Mrecord, label=\"{No|%d}|{data|" SPECIF_TYPE "}|{next|%d}|{prev|%d}\"];\n",
+        if(now_elem_index == 0) fprintf (dump_file, "node%d [color = \"#480b41\", fillcolor = \"#ff00d953\", style = filled, shape = Mrecord, label=\"{index|%d}|{data|" SPECIF_TYPE "}|{next|%d}|{prev|%d}\"];\n",
+                i,now_elem_index, list -> data [now_elem_index], list -> next [now_elem_index], list -> prev [now_elem_index]);
+        else if (i == 0) fprintf (dump_file, "node%d [color = \"#3b3a19\", fillcolor = \"#d6ca2777\", style = filled, shape = Mrecord, label=\"{index|%d}|{data|" SPECIF_TYPE "}|{next|%d}|{prev|%d}\"];\n",
+                i,now_elem_index, list -> data [now_elem_index], list -> next [now_elem_index], list -> prev [now_elem_index]);
+        else if (list -> next [now_elem_index] == 0) fprintf (dump_file, "node%d [color = \"#0f3937\", fillcolor = \"#0cdee577\", style = filled, shape = Mrecord, label=\"{index|%d}|{data|" SPECIF_TYPE "}|{next|%d}|{prev|%d}\"];\n",
+                i,now_elem_index, list -> data [now_elem_index], list -> next [now_elem_index], list -> prev [now_elem_index]);
+        else fprintf (dump_file, "node%d [color = \"#20480b\", fillcolor = \"#11712477\", style = filled, shape = Mrecord, label=\"{index|%d}|{data|" SPECIF_TYPE "}|{next|%d}|{prev|%d}\"];\n",
                 i,now_elem_index, list -> data [now_elem_index], list -> next [now_elem_index], list -> prev [now_elem_index]);
         if (i != 0) fprintf (dump_file, "node%d -> node%d [label = \"%d\", weight = 100];\n", i - 1, i, i - 1);
         if (now_elem_index == 0) break;
         now_elem_index = list -> next [now_elem_index];
     }
-    fprintf (dump_file, "node%d [shape = Mrecord, label = \"tail|%d\"];\n", i + 1, list -> tail);
-    fprintf (dump_file, "node%d [shape = Mrecord, label = \"head|%d\"];\n", i + 2, list -> head);
+    fprintf (dump_file, "node%d [color = \"#3b3a19\", fillcolor = \"#d6ca2777\", style = filled, shape = Mrecord, label = \"tail|%d\"];\n", i + 1, list -> tail);
+    fprintf (dump_file, "node%d [color = \"#0f3937\", fillcolor = \"#0cdee577\", style = filled, shape = Mrecord, label = \"head|%d\"];\n", i + 2, list -> head);
 
     fprintf (dump_file, "node%d -> node%d [style = invis];\n", 0, i + 1);
     if (i - 1 >= 0) fprintf (dump_file, "node%d -> node%d [style = invis];\n", i - 1, i + 2);
@@ -169,13 +175,18 @@ void dump_list (struct List* list) //TODO: graphviz
     fprintf (dump_file, "subgraph cluster_data {\n");
     fprintf (dump_file, "label = \"data. Created: time:%s, date: %s\";\n", __TIME__, __DATE__);
     fprintf (dump_file, "style = rounded;\n");
-    fprintf (dump_file, "color = \"#ff0015\";\n");
+    fprintf (dump_file, "newrank = true;\n");
+    fprintf (dump_file, "color = \"#0c0a79\";\n");
 
-    fprintf (dump_file, "ceil01 [shape = record, label =\"No|data\"];\n");
+    fprintf (dump_file, "ceil01 [shape = record, label =\"index|data\"];\n");
     int j = 0;
     for (j = 0; j < list -> len_data; j ++)
     {
-        fprintf (dump_file, "ceil%d [shape = record, label =\"%d|" SPECIF_TYPE "\"];\n", j, j, list -> data [j]);
+        if (j == 0) fprintf (dump_file, "ceil%d [color = \"#480b41\", fillcolor = \"#ff00d953\", style = filled, shape = record, label =\"%d|" SPECIF_TYPE "\"];\n", j, j, list -> data [j]);
+        else if (list -> data [j] == POISON) fprintf (dump_file, "ceil%d [color = \"#1f0b48\", fillcolor = \"#0400ff77\", style = filled, shape = record, label =\"%d|" SPECIF_TYPE "\"];\n", j, j, list -> data [j]);
+        else if (j == list -> tail) fprintf (dump_file, "ceil%d [color = \"#3b3a19\", fillcolor = \"#d6ca2777\", style = filled, shape = record, label =\"%d|" SPECIF_TYPE "\"];\n", j, j, list -> data [j]);
+        else if (j == list -> head) fprintf (dump_file, "ceil%d [color = \"#0f3937\", fillcolor = \"#0cdee577\", style = filled, shape = record, label =\"%d|" SPECIF_TYPE "\"];\n", j, j, list -> data [j]);
+        else fprintf (dump_file, "ceil%d [color = \"#20480b\", fillcolor = \"#11712477\", style = filled, shape = record, label =\"%d|" SPECIF_TYPE "\"];\n", j, j, list -> data [j]);
 
         if (j == 0) fprintf (dump_file, "ceil01 -> node0 [style = invis, weight = 100];\n");
         else fprintf (dump_file, "ceil%d -> ceil%d [style = invis, weight = 200];\n", j - 1, j);
